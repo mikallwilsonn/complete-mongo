@@ -1,12 +1,27 @@
+// ----
+// Dependencies
 const mongoose = require( 'mongoose' );
 
-mongoose.connect( 'mongodb://localhost/users_test' );
-mongoose.connection
-    .once( 'open', () => console.log( 'Good to go.' ))
-    .on( 'error', ( error ) => {
-        console.warn( 'Warning ', error  );
-    });
 
-beforeEach(() => {
-    mongoose.connection.collections.users.drop();
+// ----
+// Mongoose Helper setup
+before(( done ) => {
+    mongoose.Promise = global.Promise;
+    mongoose.connect( 'mongodb://localhost/users_test' );
+    mongoose.connection
+        .once( 'open', () => { done() })
+        .on( 'error', ( error ) => {
+            console.warn( 'Warning ', error  );
+        });
+});
+
+
+
+// ----
+// Mocha, beforeEach test
+beforeEach(( done ) => {
+    mongoose.connection.collections.users.drop(() => {
+        // Ready to run next test
+        done();
+    });
 });
