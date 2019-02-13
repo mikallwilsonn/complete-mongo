@@ -1,7 +1,12 @@
+// ----
+// Dependencies
 const mongoose = require( 'mongoose' );
 const Schema = mongoose.Schema;
 const PostSchema = require( './Post' );
 
+
+// ----
+// Schema creation
 const UserSchema = new Schema({
 
     name: {
@@ -25,11 +30,23 @@ const UserSchema = new Schema({
 });
 
 
+// ----
+// Virtual Types
 UserSchema.virtual( 'postCount' ).get( function() {
     return this.posts.length;
 });
 
 
-const User = mongoose.model( 'User', UserSchema );
+// ----
+// Middlewares
+UserSchema.pre( 'remove', function( next ) {
+    const BlogPost = mongoose.model( 'BlogPost' );
+    BlogPost.remove({ _id: { $in: this.blogPosts }})
+        .then(() => next());
+});
 
+
+// ----
+// Model Creation and Export
+const User = mongoose.model( 'User', UserSchema );
 module.exports = User;
