@@ -27,7 +27,7 @@ describe( 'Middleware', () => {
 
     // ----
     it( 'Clean up remaining BlogPost\'s when a User is removed', ( done ) => {
-        joe.remove().then(() => BlogPost.count().then(( count ) => {
+        joe.remove().then(() => BlogPost.countDocuments().then(( count ) => {
             assert( count === 0 );
             done();
         }));
